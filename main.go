@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"net/url"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -44,10 +45,12 @@ func main() {
 
 	ctx := context.Background()
 
-	fromLL, err := getFromLatLon(ctx, c, fromAddy)
+	fromRes, err := getFromLatLon(ctx, c, fromAddy)
 	if err != nil {
 		panic(err)
 	}
+
+	fromLL := &fromRes.Geometry.Location
 
 	log.Printf("lat=%v lon=%v", fromLL.Lat, fromLL.Lng)
 
@@ -91,6 +94,13 @@ func main() {
 	// get random restautrant from list
 	target := results[rand.Intn(len(results)-1)]
 	distToTarget := distance(fromLL, &target.Geometry.Location) / metersPerMile
+	directionsURL := fmt.Sprintf(
+		"https://www.google.com/maps/dir/?api=1&origin_place_id=%s&destination_place_id=%s&travelmode=driving&origin=%s&destination=%s",
+		fromRes.PlaceID,
+		target.PlaceID,
+		url.PathEscape(fromRes.FormattedAddress),
+		url.PathEscape(target.FormattedAddress),
+	)
 	log.Println("----------")
 	log.Println("RANDOM CHOICE:")
 	log.Printf("Name: %s", target.Name)
@@ -100,6 +110,7 @@ func main() {
 	log.Printf("Rating: %v", target.Rating)
 	log.Printf("TotalRatings: %v", target.UserRatingsTotal)
 	log.Printf("Type: %v", target.Types)
+	log.Printf("DirectionsUrl: %s", directionsURL)
 	log.Println("----------")
 }
 
@@ -120,7 +131,7 @@ func costToString(i int) string {
 	}
 }
 
-func getFromLatLon(ctx context.Context, c *maps.Client, fromAddy string) (*maps.LatLng, error) {
+func getFromLatLon(ctx context.Context, c *maps.Client, fromAddy string) (*maps.GeocodingResult, error) {
 	fromLocs, err := c.Geocode(ctx, &maps.GeocodingRequest{
 		Address: fromAddy,
 	})
@@ -133,7 +144,7 @@ func getFromLatLon(ctx context.Context, c *maps.Client, fromAddy string) (*maps.
 	}
 
 	// assume the first one is right
-	return &fromLocs[0].Geometry.Location, nil
+	return &fromLocs[0], nil
 }
 
 func pointAtDistance(location *maps.LatLng, radius float64) *maps.LatLng {
