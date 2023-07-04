@@ -14,6 +14,16 @@ type Query {
     randomDestinationsWithinRing(args: RandomDestinationsWithinRing!): [Destination!]!
 }
 
+enum LengthUnit {
+    Miles
+    Kilometers
+}
+
+input Length {
+    value: Float!
+    unit: LengthUnit!
+}
+
 input Point {
     latitude: Float!
     longitude: Float!
@@ -21,20 +31,16 @@ input Point {
 
 input Ring {
     center: Point!
-    innerRadius: Float!
-    outerRadius: Float!
+    innerRadius: Length!
+    outerRadius: Length!
 }
 
 enum DestinationType {
     Restaurant
 }
 
-input DestinationTypeFilter {
-    anyOf: DestinationType!
-}
-
 input DestinationFilters {
-    type: DestinationTypeFilter
+    type: DestinationType!
 }
 
 input RandomDestinationWithinRing {
@@ -58,9 +64,16 @@ interface Destination {
 }
 
 type Restaurant implements Destination {
-    rating: Float
+    # required by interface
     latitude: Float!
     longitude: Float!
     name: String!
     estimatedTravelTime(origin: Point!): Duration! @goField(forceResolver: true)
+
+    # restaurant stuff
+    rating: Float
+    numRatings: Int
+    types: [String!]!
+    hours: [String!]!
+    iconURL: String
 }

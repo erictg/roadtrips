@@ -52,10 +52,14 @@ type ComplexityRoot struct {
 
 	Restaurant struct {
 		EstimatedTravelTime func(childComplexity int, origin model.Point) int
+		Hours               func(childComplexity int) int
+		IconURL             func(childComplexity int) int
 		Latitude            func(childComplexity int) int
 		Longitude           func(childComplexity int) int
 		Name                func(childComplexity int) int
+		NumRatings          func(childComplexity int) int
 		Rating              func(childComplexity int) int
+		Types               func(childComplexity int) int
 	}
 }
 
@@ -118,6 +122,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Restaurant.EstimatedTravelTime(childComplexity, args["origin"].(model.Point)), true
 
+	case "Restaurant.hours":
+		if e.complexity.Restaurant.Hours == nil {
+			break
+		}
+
+		return e.complexity.Restaurant.Hours(childComplexity), true
+
+	case "Restaurant.iconURL":
+		if e.complexity.Restaurant.IconURL == nil {
+			break
+		}
+
+		return e.complexity.Restaurant.IconURL(childComplexity), true
+
 	case "Restaurant.latitude":
 		if e.complexity.Restaurant.Latitude == nil {
 			break
@@ -139,12 +157,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Restaurant.Name(childComplexity), true
 
+	case "Restaurant.numRatings":
+		if e.complexity.Restaurant.NumRatings == nil {
+			break
+		}
+
+		return e.complexity.Restaurant.NumRatings(childComplexity), true
+
 	case "Restaurant.rating":
 		if e.complexity.Restaurant.Rating == nil {
 			break
 		}
 
 		return e.complexity.Restaurant.Rating(childComplexity), true
+
+	case "Restaurant.types":
+		if e.complexity.Restaurant.Types == nil {
+			break
+		}
+
+		return e.complexity.Restaurant.Types(childComplexity), true
 
 	}
 	return 0, false
@@ -155,7 +187,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputDestinationFilters,
-		ec.unmarshalInputDestinationTypeFilter,
+		ec.unmarshalInputLength,
 		ec.unmarshalInputPoint,
 		ec.unmarshalInputRandomDestinationWithinRing,
 		ec.unmarshalInputRandomDestinationsWithinRing,
@@ -598,47 +630,6 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Restaurant_rating(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Restaurant_rating(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Rating, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*float64)
-	fc.Result = res
-	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Restaurant_rating(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Restaurant",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Restaurant_latitude(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Restaurant_latitude(ctx, field)
 	if err != nil {
@@ -822,6 +813,217 @@ func (ec *executionContext) fieldContext_Restaurant_estimatedTravelTime(ctx cont
 	if fc.Args, err = ec.field_Restaurant_estimatedTravelTime_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Restaurant_rating(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Restaurant_rating(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rating, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Restaurant_rating(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Restaurant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Restaurant_numRatings(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Restaurant_numRatings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NumRatings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Restaurant_numRatings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Restaurant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Restaurant_types(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Restaurant_types(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Types, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Restaurant_types(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Restaurant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Restaurant_hours(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Restaurant_hours(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hours, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Restaurant_hours(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Restaurant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Restaurant_iconURL(ctx context.Context, field graphql.CollectedField, obj *model.Restaurant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Restaurant_iconURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IconURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Restaurant_iconURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Restaurant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -2617,7 +2819,7 @@ func (ec *executionContext) unmarshalInputDestinationFilters(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalODestinationTypeFilter2ᚖgithubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐDestinationTypeFilter(ctx, v)
+			data, err := ec.unmarshalNDestinationType2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐDestinationType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2628,29 +2830,38 @@ func (ec *executionContext) unmarshalInputDestinationFilters(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputDestinationTypeFilter(ctx context.Context, obj interface{}) (model.DestinationTypeFilter, error) {
-	var it model.DestinationTypeFilter
+func (ec *executionContext) unmarshalInputLength(ctx context.Context, obj interface{}) (model.Length, error) {
+	var it model.Length
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"anyOf"}
+	fieldsInOrder := [...]string{"value", "unit"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "anyOf":
+		case "value":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("anyOf"))
-			data, err := ec.unmarshalNDestinationType2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐDestinationType(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalNFloat2float64(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AnyOf = data
+			it.Value = data
+		case "unit":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("unit"))
+			data, err := ec.unmarshalNLengthUnit2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLengthUnit(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Unit = data
 		}
 	}
 
@@ -2798,7 +3009,7 @@ func (ec *executionContext) unmarshalInputRing(ctx context.Context, obj interfac
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("innerRadius"))
-			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			data, err := ec.unmarshalNLength2ᚖgithubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLength(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2807,7 +3018,7 @@ func (ec *executionContext) unmarshalInputRing(ctx context.Context, obj interfac
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("outerRadius"))
-			data, err := ec.unmarshalNFloat2float64(ctx, v)
+			data, err := ec.unmarshalNLength2ᚖgithubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLength(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2947,8 +3158,6 @@ func (ec *executionContext) _Restaurant(ctx context.Context, sel ast.SelectionSe
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Restaurant")
-		case "rating":
-			out.Values[i] = ec._Restaurant_rating(ctx, field, obj)
 		case "latitude":
 			out.Values[i] = ec._Restaurant_latitude(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3000,6 +3209,22 @@ func (ec *executionContext) _Restaurant(ctx context.Context, sel ast.SelectionSe
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "rating":
+			out.Values[i] = ec._Restaurant_rating(ctx, field, obj)
+		case "numRatings":
+			out.Values[i] = ec._Restaurant_numRatings(ctx, field, obj)
+		case "types":
+			out.Values[i] = ec._Restaurant_types(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "hours":
+			out.Values[i] = ec._Restaurant_hours(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "iconURL":
+			out.Values[i] = ec._Restaurant_iconURL(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3458,6 +3683,21 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
+func (ec *executionContext) unmarshalNLength2ᚖgithubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLength(ctx context.Context, v interface{}) (*model.Length, error) {
+	res, err := ec.unmarshalInputLength(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNLengthUnit2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLengthUnit(ctx context.Context, v interface{}) (model.LengthUnit, error) {
+	var res model.LengthUnit
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLengthUnit2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐLengthUnit(ctx context.Context, sel ast.SelectionSet, v model.LengthUnit) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNPoint2githubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐPoint(ctx context.Context, v interface{}) (model.Point, error) {
 	res, err := ec.unmarshalInputPoint(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3496,6 +3736,38 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -3785,14 +4057,6 @@ func (ec *executionContext) unmarshalODestinationFilters2ᚖgithubᚗcomᚋerict
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalODestinationTypeFilter2ᚖgithubᚗcomᚋerictgᚋroadtripsᚋservicesᚋdestinationᚋgraphᚋmodelᚐDestinationTypeFilter(ctx context.Context, v interface{}) (*model.DestinationTypeFilter, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputDestinationTypeFilter(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v interface{}) (*float64, error) {
 	if v == nil {
 		return nil, nil
@@ -3807,6 +4071,22 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	}
 	res := graphql.MarshalFloatContext(*v)
 	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

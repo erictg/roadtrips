@@ -17,11 +17,12 @@ type Destination interface {
 }
 
 type DestinationFilters struct {
-	Type *DestinationTypeFilter `json:"type,omitempty"`
+	Type DestinationType `json:"type"`
 }
 
-type DestinationTypeFilter struct {
-	AnyOf DestinationType `json:"anyOf"`
+type Length struct {
+	Value float64    `json:"value"`
+	Unit  LengthUnit `json:"unit"`
 }
 
 type Point struct {
@@ -40,11 +41,15 @@ type RandomDestinationsWithinRing struct {
 }
 
 type Restaurant struct {
-	Rating              *float64 `json:"rating,omitempty"`
 	Latitude            float64  `json:"latitude"`
 	Longitude           float64  `json:"longitude"`
 	Name                string   `json:"name"`
 	EstimatedTravelTime string   `json:"estimatedTravelTime"`
+	Rating              *float64 `json:"rating,omitempty"`
+	NumRatings          *int     `json:"numRatings,omitempty"`
+	Types               []string `json:"types"`
+	Hours               []string `json:"hours"`
+	IconURL             *string  `json:"iconURL,omitempty"`
 }
 
 func (Restaurant) IsDestination()                      {}
@@ -55,8 +60,8 @@ func (this Restaurant) GetEstimatedTravelTime() string { return this.EstimatedTr
 
 type Ring struct {
 	Center      *Point  `json:"center"`
-	InnerRadius float64 `json:"innerRadius"`
-	OuterRadius float64 `json:"outerRadius"`
+	InnerRadius *Length `json:"innerRadius"`
+	OuterRadius *Length `json:"outerRadius"`
 }
 
 type DestinationType string
@@ -95,5 +100,46 @@ func (e *DestinationType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e DestinationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type LengthUnit string
+
+const (
+	LengthUnitMiles      LengthUnit = "Miles"
+	LengthUnitKilometers LengthUnit = "Kilometers"
+)
+
+var AllLengthUnit = []LengthUnit{
+	LengthUnitMiles,
+	LengthUnitKilometers,
+}
+
+func (e LengthUnit) IsValid() bool {
+	switch e {
+	case LengthUnitMiles, LengthUnitKilometers:
+		return true
+	}
+	return false
+}
+
+func (e LengthUnit) String() string {
+	return string(e)
+}
+
+func (e *LengthUnit) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = LengthUnit(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid LengthUnit", str)
+	}
+	return nil
+}
+
+func (e LengthUnit) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

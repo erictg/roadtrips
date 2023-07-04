@@ -12,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-20.04
+    environment: dev
     steps:
     - id: 'auth'
       uses: 'google-github-actions/auth@v1'

@@ -13,34 +13,44 @@ import (
 )
 
 // RandomDestinationWithinRing is the resolver for the randomDestinationWithinRing field.
-func (r *queryResolver) RandomDestinationWithinRing(ctx context.Context, args model.RandomDestinationWithinRing) (model.Destination, error) {	
-	res, err := r.client.GetRandomDestination(ctx, adaptPointToLatLon(*args.Ring.Center), args.Ring.InnerRadius, args.Ring.OuterRadius, adaptDestinationTypeToPlaceType(args.Filters.Type.AnyOf))
+func (r *queryResolver) RandomDestinationWithinRing(ctx context.Context, args model.RandomDestinationWithinRing) (model.Destination, error) {
+	res, err := r.client.GetRandomDestination(ctx, adaptPointToLatLon(*args.Ring.Center),
+		lengthToMeters(*args.Ring.InnerRadius), lengthToMeters(*args.Ring.OuterRadius), adaptDestinationTypeToPlaceType(args.Filters.Type))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get random destionation, %w", err)
 	}
 
 	return model.Restaurant{
-		Rating: ptrOf(float64(res.Rating)),
-		Latitude: res.Geometry.Location.Lat,
-		Longitude: res.Geometry.Location.Lng,
-		Name: res.Name,
+		Rating:     ptrOf(float64(res.Rating)),
+		Latitude:   res.Geometry.Location.Lat,
+		Longitude:  res.Geometry.Location.Lng,
+		Name:       res.Name,
+		Types:      res.Types,
+		Hours:      res.OpeningHours.WeekdayText,
+		NumRatings: &res.UserRatingsTotal,
+		IconURL:    &res.Icon,
 	}, nil
 }
 
 // RandomDestinationsWithinRing is the resolver for the randomDestinationsWithinRing field.
 func (r *queryResolver) RandomDestinationsWithinRing(ctx context.Context, args model.RandomDestinationsWithinRing) ([]model.Destination, error) {
-	results, err := r.client.GetRandomDestinations(ctx, adaptPointToLatLon(*args.Ring.Center), args.Ring.InnerRadius, args.Ring.OuterRadius, adaptDestinationTypeToPlaceType(args.Filters.Type.AnyOf))
+	results, err := r.client.GetRandomDestinations(ctx, adaptPointToLatLon(*args.Ring.Center),
+		lengthToMeters(*args.Ring.InnerRadius), lengthToMeters(*args.Ring.OuterRadius), adaptDestinationTypeToPlaceType(args.Filters.Type))
 	if err != nil {
 		return nil, fmt.Errorf("failed to get random destionations, %w", err)
 	}
 
 	restys := make([]model.Destination, len(results))
-	for i, rest := range results {
+	for i, res := range results {
 		restys[i] = model.Restaurant{
-			Rating: ptrOf(float64(rest.Rating)),
-			Latitude: rest.Geometry.Location.Lat,
-			Longitude: rest.Geometry.Location.Lng,
-			Name: rest.Name,
+			Rating:     ptrOf(float64(res.Rating)),
+			Latitude:   res.Geometry.Location.Lat,
+			Longitude:  res.Geometry.Location.Lng,
+			Name:       res.Name,
+			Types:      res.Types,
+			Hours:      res.OpeningHours.WeekdayText,
+			NumRatings: &res.UserRatingsTotal,
+			IconURL:    &res.Icon,
 		}
 	}
 
