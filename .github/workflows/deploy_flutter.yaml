@@ -19,10 +19,13 @@ jobs:
       with:
         flutter-version: '3.10.5'
     - run: flutter pub get
-    - run: flutter build apk 
+      working-directory: roadtrips/
+    - run: flutter build apk
+      working-directory: roadtrips/
     - name: version
       run: echo "::set-output name=version::`date -u +"%Y-%m-%d-%H_%M_%S"`-`git rev-parse HEAD`"
       id: version
+      working-directory: ./
     - name: release
       uses: actions/create-release@v1
       id: create_release
