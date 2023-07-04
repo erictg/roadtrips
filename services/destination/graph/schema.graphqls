@@ -60,7 +60,8 @@ interface Destination {
     latitude: Float!
     longitude: Float!
     name: String!
-    estimatedTravelTime(origin: Point!): Duration! 
+    estimatedTravelTime(origin: Point!): Duration!
+    wazeDeeplink: String!
 }
 
 type Restaurant implements Destination {
@@ -69,6 +70,7 @@ type Restaurant implements Destination {
     longitude: Float!
     name: String!
     estimatedTravelTime(origin: Point!): Duration! @goField(forceResolver: true)
+    wazeDeeplink: String!
 
     # restaurant stuff
     rating: Float
