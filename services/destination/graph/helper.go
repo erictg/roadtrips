@@ -40,5 +40,6 @@ func lengthToMeters(l model.Length) float64 {
 }
 
 func getWazeURL(target maps.LatLng) string {
+
 	return fmt.Sprintf("https://waze.com/ul?ll=%s&navigate=true", target.String())
 }
