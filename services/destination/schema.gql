@@ -1,0 +1,56 @@
+schema {
+    query: Query
+}
+
+type Query {
+    randomDestinationWithinRing(args: RandomDestinationWithinRing!): Destination!
+
+    randomDestinationsWithinRing(args: RandomDestinationsWithinRing!): [Destination!]!
+}
+
+input Point {
+    latitude: Float!
+    longitude: Float!
+}
+
+input Ring {
+    center: Point!
+    innerRadius: Float!
+    outerRadius: Float!
+}
+
+enum DestinationType {
+    Restaurant
+}
+
+input DestinationTypeFilter {
+    anyOf: [DestinationType!]
+}
+
+input DestinationFilters {
+    type: DestinationTypeFilter
+}
+
+input RandomDestinationWithinRing {
+    filters: DestinationFilters
+    ring: Ring!
+}
+
+input RandomDestinationsWithinRing {
+    filters: DestinationFilters
+    ring: Ring!
+}
+
+# Duration represents some duration of time. Possibly in seconds but TBD.
+scalar Duration
+
+interface Destination {
+    latitude: Float!
+    longitude: Float!
+    name: String!
+    estimatedTravelTime(origin: Point!): Duration!
+}
+
+type Restaurant implements Destination {
+    rating: Float
+}
