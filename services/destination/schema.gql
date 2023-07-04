@@ -19,11 +19,25 @@ input Ring {
     outerRadius: Float!
 }
 
+enum DestinationType {
+    Restaurant
+}
+
+input DestinationTypeFilter {
+    anyOf: [DestinationType!]
+}
+
+input DestinationFilters {
+    type: DestinationTypeFilter!
+}
+
 input RandomDestinationWithinRing {
+    filters: DestinationFilters
     ring: Ring!
 }
 
 input RandomDestinationsWithinRing {
+    filters: DestinationFilters
     ring: Ring!
 }
 
