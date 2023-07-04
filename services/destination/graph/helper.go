@@ -24,3 +24,15 @@ func adaptDestinationTypeToPlaceType(dt model.DestinationType) maps.PlaceType {
 func ptrOf[T any](v T) *T {
 	return &v
 }
+
+func lengthToMeters(l model.Length) float64 {
+	switch l.Unit {
+	case model.LengthUnitKilometers:
+		return l.Value * 1000
+	case model.LengthUnitMiles:
+		return l.Value * 1609.344
+	default:
+		// we shouldn't be able to hit this anyways
+		return l.Value
+	}
+}
