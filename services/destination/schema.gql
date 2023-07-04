@@ -20,19 +20,21 @@ input Ring {
 }
 
 input RandomDestinationWithinRing {
-    origin: Point!
     ring: Ring!
 }
 
 input RandomDestinationsWithinRing {
-    origin: Point!
     ring: Ring!
 }
+
+# Duration represents some duration of time. Possibly in seconds but TBD.
+scalar Duration
 
 interface Destination {
     latitude: Float!
     longitude: Float!
     name: String!
+    estimatedTravelTime(origin: Point!): Duration!
 }
 
 type Restaurant implements Destination {
