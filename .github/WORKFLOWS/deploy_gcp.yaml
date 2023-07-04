@@ -1,0 +1,23 @@
+name: GCP Deploy
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - go.mod
+      - go.sum
+      - destination_service.go
+      - services/
+
+job:
+  deploy:
+    steps:
+    - uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: "Deploy"
+      run: gcloud functions deploy DestinationGQL --runtime go120 --trigger-http --allow-unauthenticated

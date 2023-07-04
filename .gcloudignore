@@ -12,6 +12,8 @@
 # below:
 .git
 .gitignore
-
+.github
+cmd/
+roadtrips/
 node_modules
 #!include:.gitignore
