@@ -13,7 +13,8 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
-    - uses: 'google-github-actions/auth@v1'
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
