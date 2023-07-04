@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:roadtrips/screens/destination_details.dart';
 import 'package:roadtrips/screens/home.dart';
 import 'package:roadtrips/screens/search.dart';
 import 'package:roadtrips/screens/suggestions.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
     HomeScreen.route,
     SearchScreen.route,
     SuggestionsScreen.route,
+    DestinationDetailsScreen.route,
   ];
 
   @override
