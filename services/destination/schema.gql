@@ -1,0 +1,39 @@
+schema {
+    query: Query
+}
+
+type Query {
+    randomDestinationWithinRing(args: RandomDestinationWithinRing!): Destination!
+
+    randomDestinationsWithinRing(args: RandomDestinationsWithinRing!): [Destination!]!
+}
+
+input Point {
+    latitude: Float!
+    longitude: Float!
+}
+
+input Ring {
+    center: Point!
+    innerRadius: Float!
+    outerRadius: Float!
+}
+
+input RandomDestinationWithinRing {
+    ring: Ring!
+}
+
+input RandomDestinationsWithinRing {
+    ring: Ring!
+}
+
+interface Destination {
+    latitude: Float!
+    longitude: Float!
+    name: String!
+}
+
+type Restaurant implements Destination {
+    rating: Float
+}
+
