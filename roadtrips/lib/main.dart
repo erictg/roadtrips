@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:roadtrips/screens/home.dart';
+import 'package:roadtrips/screens/search.dart';
+import 'package:roadtrips/screens/suggestions.dart';
 
 void main() {
-  runApp(const MyApp());
+  final _httpLink = HttpLink(
+    'https://us-central1-tactical-racer-183815.cloudfunctions.net/DestinationGQL',
+  );
+  final ValueNotifier<GraphQLClient> client =
+      ValueNotifier(GraphQLClient(link: _httpLink, cache: GraphQLCache()));
+
+  runApp(MyApp(client: client));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ValueNotifier<GraphQLClient> client;
+
+  const MyApp({super.key, required this.client});
+
+  static List<(String, Widget Function(BuildContext))> routes = [
+    HomeScreen.route,
+    SearchScreen.route,
+    SuggestionsScreen.route,
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: const Text('Road Trips'),
+    return GraphQLProvider(
+      client: client,
+      child: MaterialApp(
+        title: 'Road Tripper',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
-        body: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Hello')
-            ],
-          )
-        ),
+        initialRoute: '/',
+        routes: {for (var route in routes) route.$1: route.$2},
       ),
     );
   }
