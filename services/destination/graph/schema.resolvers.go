@@ -21,14 +21,15 @@ func (r *queryResolver) RandomDestinationWithinRing(ctx context.Context, args mo
 	}
 
 	return model.Restaurant{
-		Rating:     ptrOf(float64(res.Rating)),
-		Latitude:   res.Geometry.Location.Lat,
-		Longitude:  res.Geometry.Location.Lng,
-		Name:       res.Name,
-		Types:      res.Types,
-		Hours:      res.OpeningHours.WeekdayText,
-		NumRatings: &res.UserRatingsTotal,
-		IconURL:    &res.Icon,
+		Rating:       ptrOf(float64(res.Rating)),
+		Latitude:     res.Geometry.Location.Lat,
+		Longitude:    res.Geometry.Location.Lng,
+		Name:         res.Name,
+		Types:        res.Types,
+		Hours:        res.OpeningHours.WeekdayText,
+		NumRatings:   &res.UserRatingsTotal,
+		IconURL:      &res.Icon,
+		WazeDeeplink: getWazeURL(res.Geometry.Location),
 	}, nil
 }
 
@@ -43,14 +44,15 @@ func (r *queryResolver) RandomDestinationsWithinRing(ctx context.Context, args m
 	restys := make([]model.Destination, len(results))
 	for i, res := range results {
 		restys[i] = model.Restaurant{
-			Rating:     ptrOf(float64(res.Rating)),
-			Latitude:   res.Geometry.Location.Lat,
-			Longitude:  res.Geometry.Location.Lng,
-			Name:       res.Name,
-			Types:      res.Types,
-			Hours:      res.OpeningHours.WeekdayText,
-			NumRatings: &res.UserRatingsTotal,
-			IconURL:    &res.Icon,
+			Rating:       ptrOf(float64(res.Rating)),
+			Latitude:     res.Geometry.Location.Lat,
+			Longitude:    res.Geometry.Location.Lng,
+			Name:         res.Name,
+			Types:        res.Types,
+			Hours:        res.OpeningHours.WeekdayText,
+			NumRatings:   &res.UserRatingsTotal,
+			IconURL:      &res.Icon,
+			WazeDeeplink: getWazeURL(res.Geometry.Location),
 		}
 	}
 

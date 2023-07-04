@@ -1,6 +1,8 @@
 package graph
 
 import (
+	"fmt"
+
 	"github.com/erictg/roadtrips/services/destination/graph/model"
 	"googlemaps.github.io/maps"
 )
@@ -35,4 +37,8 @@ func lengthToMeters(l model.Length) float64 {
 		// we shouldn't be able to hit this anyways
 		return l.Value
 	}
+}
+
+func getWazeURL(target maps.LatLng) string {
+	return fmt.Sprintf("https://waze.com/ul?ll=%s&navigate=true", target.String())
 }

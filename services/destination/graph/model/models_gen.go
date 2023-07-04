@@ -14,6 +14,7 @@ type Destination interface {
 	GetLongitude() float64
 	GetName() string
 	GetEstimatedTravelTime() string
+	GetWazeDeeplink() string
 }
 
 type DestinationFilters struct {
@@ -45,6 +46,7 @@ type Restaurant struct {
 	Longitude           float64  `json:"longitude"`
 	Name                string   `json:"name"`
 	EstimatedTravelTime string   `json:"estimatedTravelTime"`
+	WazeDeeplink        string   `json:"wazeDeeplink"`
 	Rating              *float64 `json:"rating,omitempty"`
 	NumRatings          *int     `json:"numRatings,omitempty"`
 	Types               []string `json:"types"`
@@ -57,6 +59,7 @@ func (this Restaurant) GetLatitude() float64           { return this.Latitude }
 func (this Restaurant) GetLongitude() float64          { return this.Longitude }
 func (this Restaurant) GetName() string                { return this.Name }
 func (this Restaurant) GetEstimatedTravelTime() string { return this.EstimatedTravelTime }
+func (this Restaurant) GetWazeDeeplink() string        { return this.WazeDeeplink }
 
 type Ring struct {
 	Center      *Point  `json:"center"`
