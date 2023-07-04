@@ -8,6 +8,7 @@ const String suggestionsQuery = """
       latitude
       longitude
       name
+      wazeDeeplink
     }
   }""";
 
@@ -15,8 +16,10 @@ class Destination {
   final double latitude;
   final double longitude;
   final String name;
+  final String wazeDeepLink;
 
-  const Destination(this.latitude, this.longitude, this.name);
+  const Destination(
+      this.latitude, this.longitude, this.name, this.wazeDeepLink);
 }
 
 class SuggestionsScreen extends StatelessWidget {
@@ -68,8 +71,18 @@ class SuggestionsScreen extends StatelessWidget {
 
           return ListView(
             children: destinations
+                .map((destination) => Destination(
+                      destination['latitude'],
+                      destination['longitude'],
+                      destination['name'],
+                      destination['wazeDeeplink'],
+                    ))
                 .map((destination) => ListTile(
-                      title: Text(destination['name']),
+                      title: Text(destination.name),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/destination/details',
+                            arguments: destination);
+                      },
                     ))
                 .toList(),
           );
