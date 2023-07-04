@@ -28,7 +28,7 @@ input DestinationTypeFilter {
 }
 
 input DestinationFilters {
-    type: DestinationTypeFilter!
+    type: DestinationTypeFilter
 }
 
 input RandomDestinationWithinRing {
