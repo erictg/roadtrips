@@ -20,10 +20,12 @@ input Ring {
 }
 
 input RandomDestinationWithinRing {
+    origin: Point!
     ring: Ring!
 }
 
 input RandomDestinationsWithinRing {
+    origin: Point!
     ring: Ring!
 }
 
@@ -36,4 +38,3 @@ interface Destination {
 type Restaurant implements Destination {
     rating: Float
 }
-
